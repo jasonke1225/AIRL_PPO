@@ -4,7 +4,7 @@ from torch.optim import Adam
 
 from .base import Algorithm
 from gail_airl_ppo.buffer import RolloutBuffer
-from gail_airl_ppo.network import StateIndependentPolicy, StateFunction
+from gail_airl_ppo.network import StateIndependentPolicy, StateFunction, StateDependentPolicy
 
 
 def calculate_gae(values, rewards, dones, next_values, gamma, lambd):
@@ -40,7 +40,7 @@ class PPO(Algorithm):
         )
 
         # Actor.
-        self.actor = StateIndependentPolicy(
+        self.actor = StateDependentPolicy(
             state_shape=state_shape,
             action_shape=action_shape,
             hidden_units=units_actor,
@@ -77,7 +77,7 @@ class PPO(Algorithm):
 
         self.buffer.append(state, action, reward, mask, log_pi, next_state)
 
-        if done:
+        if done or t == env._max_episode_steps:
             t = 0
             next_state = env.reset()
 

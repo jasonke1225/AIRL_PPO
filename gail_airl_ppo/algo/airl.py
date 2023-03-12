@@ -66,8 +66,13 @@ class AIRL(PPO):
         states, actions, _, dones, log_pis, next_states = self.buffer.get()
 
         # Calculate rewards.
-        rewards = self.disc.calculate_reward(
-            states, dones, log_pis, next_states)
+        rewards = self.disc.calculate_reward(states, dones, log_pis, next_states)
+        # # reward in paper not work
+        # rewards = None
+        # with torch.no_grad():
+        #     logits = self.disc(states, dones, log_pis, next_states)
+        #     rewards = -F.logsigmoid(-logits) + F.logsigmoid(logits)
+        #     # print(rewards, -F.logsigmoid(-logits))
 
         # Update PPO using estimated rewards.
         self.update_ppo(
@@ -78,8 +83,7 @@ class AIRL(PPO):
                     next_states_exp, writer):
         # Output of discriminator is (-inf, inf), not [0, 1].
         logits_pi = self.disc(states, dones, log_pis, next_states)
-        logits_exp = self.disc(
-            states_exp, dones_exp, log_pis_exp, next_states_exp)
+        logits_exp = self.disc(states_exp, dones_exp, log_pis_exp, next_states_exp)
 
         # Discriminator is to maximize E_{\pi} [log(1 - D)] + E_{exp} [log(D)].
         loss_pi = -F.logsigmoid(-logits_pi).mean()

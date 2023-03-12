@@ -56,6 +56,14 @@ class Buffer(SerializedBuffer):
         self._p = (self._p + 1) % self.buffer_size
         self._n = min(self._n + 1, self.buffer_size)
 
+    def close(self):
+        self.buffer_size = self._n
+        self.states = self.states[:self.buffer_size]
+        self.actions = self.actions[:self.buffer_size]
+        self.rewards = self.rewards[:self.buffer_size]
+        self.dones = self.dones[:self.buffer_size]
+        self.next_states = self.next_states[:self.buffer_size]
+
     def save(self, path):
         if not os.path.exists(os.path.dirname(path)):
             os.makedirs(os.path.dirname(path))

@@ -77,13 +77,13 @@ class SAC(Algorithm):
             action = env.action_space.sample()
         else:
             action = self.explore(state)[0]
-
         next_state, reward, done, _ = env.step(action)
         mask = False if t == env._max_episode_steps else done
+        # print(t)
 
         self.buffer.append(state, action, reward, mask, next_state)
 
-        if done:
+        if done or t == env._max_episode_steps:
             t = 0
             next_state = env.reset()
 

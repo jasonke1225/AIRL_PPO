@@ -23,7 +23,7 @@ def calculate_log_pi(log_stds, noises, actions):
 
     return gaussian_log_probs - torch.log(
         1 - actions.pow(2) + 1e-6).sum(dim=-1, keepdim=True)
-
+    # return gaussian_log_probs
 
 def reparameterize(means, log_stds):
     noises = torch.randn_like(means)

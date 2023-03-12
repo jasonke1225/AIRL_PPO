@@ -22,7 +22,7 @@ def add_random_noise(action, std):
 
 
 def collect_demo(env, algo, buffer_size, device, std, p_rand, seed=0):
-    env.seed(seed)
+    # env.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -49,13 +49,15 @@ def collect_demo(env, algo, buffer_size, device, std, p_rand, seed=0):
         else:
             action = algo.exploit(state)
             action = add_random_noise(action, std)
+        
+        next_state, reward, done, _= env.step(action)
 
-        next_state, reward, done, _ = env.step(action)
+        # print(state, action, reward, done)
         mask = False if t == env._max_episode_steps else done
         buffer.append(state, action, reward, mask, next_state)
         episode_return += reward
 
-        if done:
+        if done or t==env._max_episode_steps:
             num_episodes += 1
             total_return += episode_return
             state = env.reset()

@@ -43,7 +43,12 @@ class StateDependentPolicy(nn.Module):
 
     def forward(self, states):
         return torch.tanh(self.net(states).chunk(2, dim=-1)[0])
+        # return self.net(states).chunk(2, dim=-1)[0]
 
     def sample(self, states):
         means, log_stds = self.net(states).chunk(2, dim=-1)
-        return reparameterize(means, log_stds.clamp_(-20, 2))
+        return reparameterize(means, torch.clamp(log_stds, -20, 2))
+    
+    def evaluate_log_pi(self, states, actions):
+        means, log_stds = self.net(states).chunk(2, dim=-1)
+        return evaluate_lop_pi(means, log_stds, actions)

@@ -12,11 +12,11 @@ class Trainer:
 
         # Env to collect samples.
         self.env = env
-        self.env.seed(seed)
+        # self.env.seed(seed)
 
         # Env for evaluation.
         self.env_test = env_test
-        self.env_test.seed(2**31-seed)
+        # self.env_test.seed(2**31-seed)
 
         self.algo = algo
         self.log_dir = log_dir
@@ -61,13 +61,17 @@ class Trainer:
     def evaluate(self, step):
         mean_return = 0.0
 
-        for _ in range(self.num_eval_episodes):
+        for epi in range(self.num_eval_episodes):
             state = self.env_test.reset()
             episode_return = 0.0
             done = False
+            # Episode's timestep.
+            t = 0
 
-            while (not done):
+            while ((not done) and (t < self.env._max_episode_steps)):
+                t+=1
                 action = self.algo.exploit(state)
+                # self.env_test.render()
                 state, reward, done, _ = self.env_test.step(action)
                 episode_return += reward
 

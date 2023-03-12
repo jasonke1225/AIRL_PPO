@@ -12,6 +12,8 @@ def run(args):
     env = make_env(args.env_id)
     env_test = make_env(args.env_id)
 
+    print(env.observation_space.shape, env.action_space.shape,)
+
     algo = SAC(
         state_shape=env.observation_space.shape,
         action_shape=env.action_space.shape,
